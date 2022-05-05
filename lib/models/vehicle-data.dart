@@ -74,86 +74,53 @@ class VehicleData {
   });
 
   static fromJsonString(String text) {
-
     var json = jsonDecode(text);
-    return VehicleData(
-      id: json['id'],
-      idVehicle: json['idVehicle'],
-      lastCoolingDate: json['lastCoolingDate'],
-      lastEngineAirFilterKm: json['lastEngineAirFilterKm'],
-      lastEngineAirFilterDate: json['lastEngineAirFilterDate'],
-      lastInternalAirFilterDate: json['lastInternalAirFilterDate'],
-      lastInternalAirFilterKm: json['lastInternalAirFilterKm'],
-      lastOilDate: json['lastOilDate'],
-      lastOilFilterDate: json['lastOilFilterDate'],
-      lastOilFilterKm: json['lastOilFilterKm'],
-      lastOilKm: json['lastOilKm'],
-      lastRevisionDate: json['lastRevisionDate'],
-      lastRevisionKm: json['lastRevisionKm'],
-      lastTireCalibrationDate: json['lastTireCalibrationDate'],
-      lastTireDate: json['lastTireDate'],
-      lastTireKm: json['lastTireKm'],
-      nextCoolingDate: json['nextCoolingDate'],
-      nextEngineAirFilterDate: json['nextEngineAirFilterDate'],
-      nextEngineAirFilterKm: json['nextEngineAirFilterKm'],
-      nextInternalAirFilterDate: json['nextInternalAirFilterDate'],
-      nextInternalAirFilterKm: json['nextInternalAirFilterKm'],
-      nextOilDate: json['nextOilDate'],
-      nextOilFilterDate: json['nextOilFilterDate'],
-      nextOilFilterKm: json['nextOilFilterKm'],
-      nextOilKm: json['nextOilKm'],
-      nextRevisionDate: json['nextRevisionDate'],
-      nextRevisionKm: json['nextRevisionKm'],
-      nextTireCalibrationDate: json['nextTireCalibrationDate'],
-      nextTireDate: json['nextTireDate'],
-      nextTireKm: json['nextTireKm'],
-    );
+    return VehicleData.fromJson(json);
   }
 
   static VehicleData fromJson(Map<String, dynamic> json) {
     return VehicleData(
-      id: json['id'],
-      idVehicle: json['idVehicle'],
-      lastCoolingDate: json['lastCoolingDate'],
-      lastEngineAirFilterKm: json['lastEngineAirFilterKm'],
-      lastEngineAirFilterDate: json['lastEngineAirFilterDate'],
-      lastInternalAirFilterDate: json['lastInternalAirFilterDate'],
-      lastInternalAirFilterKm: json['lastInternalAirFilterKm'],
-      lastOilDate: json['lastOilDate'],
-      lastOilFilterDate: json['lastOilFilterDate'],
-      lastOilFilterKm: json['lastOilFilterKm'],
-      lastOilKm: json['lastOilKm'],
-      lastRevisionDate: json['lastRevisionDate'],
-      lastRevisionKm: json['lastRevisionKm'],
-      lastTireCalibrationDate: json['lastTireCalibrationDate'],
-      lastTireDate: json['lastTireDate'],
-      lastTireKm: json['lastTireKm'],
-      nextCoolingDate: json['nextCoolingDate'],
-      nextEngineAirFilterDate: json['nextEngineAirFilterDate'],
-      nextEngineAirFilterKm: json['nextEngineAirFilterKm'],
-      nextInternalAirFilterDate: json['nextInternalAirFilterDate'],
-      nextInternalAirFilterKm: json['nextInternalAirFilterKm'],
-      nextOilDate: json['nextOilDate'],
-      nextOilFilterDate: json['nextOilFilterDate'],
-      nextOilFilterKm: json['nextOilFilterKm'],
-      nextOilKm: json['nextOilKm'],
-      nextRevisionDate: json['nextRevisionDate'],
-      nextRevisionKm: json['nextRevisionKm'],
-      nextTireCalibrationDate: json['nextTireCalibrationDate'],
-      nextTireDate: json['nextTireDate'],
-      nextTireKm: json['nextTireKm'],
+      id: json['id'] as int,
+      idVehicle: json['idVehicle'] as int,
+      lastCoolingDate: DateTime.parse(json['lastCoolingDate']),
+      lastEngineAirFilterKm: json['lastEngineAirFilterKm'] as int,
+      lastEngineAirFilterDate: DateTime.parse(json['lastEngineAirFilterDate']),
+      lastInternalAirFilterDate: DateTime.parse(json['lastInternalAirFilterDate']),
+      lastInternalAirFilterKm: json['lastInternalAirFilterKm'] as int,
+      lastOilDate: DateTime.parse(json['lastOilDate']),
+      lastOilFilterDate: DateTime.parse(json['lastOilFilterDate']),
+      lastOilFilterKm: json['lastOilFilterKm'] as int,
+      lastOilKm: json['lastOilKm'] as int,
+      lastRevisionDate: DateTime.parse(json['lastRevisionDate']),
+      lastRevisionKm: json['lastRevisionKm'] as int,
+      lastTireCalibrationDate: DateTime.parse(json['lastTireCalibrationDate']),
+      lastTireDate: DateTime.parse(json['lastTireDate']),
+      lastTireKm: json['lastTireKm'] as int,
+      nextCoolingDate: DateTime.parse(json['nextCoolingDate']),
+      nextEngineAirFilterDate: DateTime.parse(json['nextEngineAirFilterDate']),
+      nextEngineAirFilterKm: json['nextEngineAirFilterKm'] as int,
+      nextInternalAirFilterDate: DateTime.parse(json['nextInternalAirFilterDate']),
+      nextInternalAirFilterKm: json['nextInternalAirFilterKm'] as int,
+      nextOilDate: DateTime.parse(json['nextOilDate']),
+      nextOilFilterDate: DateTime.parse(json['nextOilFilterDate']),
+      nextOilFilterKm: json['nextOilFilterKm'] as int,
+      nextOilKm: json['nextOilKm'] as int,
+      nextRevisionDate: DateTime.parse(json['nextRevisionDate']),
+      nextRevisionKm: json['nextRevisionKm'] as int,
+      nextTireCalibrationDate: DateTime.parse(json['nextTireCalibrationDate']),
+      nextTireDate: DateTime.parse(json['nextTireDate']),
+      nextTireKm: json['nextTireKm'] as int,
     );
   }
 
   static List<VehicleData> fromJsonList(String text) {
     try {
-
       List<dynamic> body = jsonDecode(text);
 
       List<VehicleData> vehicles = body
           .map(
             (dynamic item) => VehicleData.fromJson(item),
-      )
+          )
           .toList();
 
       return vehicles;
@@ -161,4 +128,48 @@ class VehicleData {
       rethrow;
     }
   }
+
+  Map toJson() => {
+        'id': id,
+        'idVehicle': idVehicle,
+        'lastCoolingDate': lastCoolingDate.toString(),
+        'lastEngineAirFilterKm': lastEngineAirFilterKm,
+        'lastEngineAirFilterDate': lastEngineAirFilterDate.toString(),
+        'lastInternalAirFilterDate': lastInternalAirFilterDate.toString(),
+        'lastInternalAirFilterKm': lastInternalAirFilterKm,
+        'lastOilDate': lastOilDate.toString(),
+        'lastOilFilterDate': lastOilFilterDate.toString(),
+        'lastOilFilterKm': lastOilFilterKm,
+        'lastOilKm': lastOilKm,
+        'lastRevisionDate': lastRevisionDate.toString(),
+        'lastRevisionKm': lastRevisionKm,
+        'lastTireCalibrationDate': lastTireCalibrationDate.toString(),
+        'lastTireDate': lastTireDate.toString(),
+        'lastTireKm': lastTireKm,
+        'nextCoolingDate': nextCoolingDate.toString(),
+        'nextEngineAirFilterDate': nextEngineAirFilterDate.toString(),
+        'nextEngineAirFilterKm': nextEngineAirFilterKm,
+        'nextInternalAirFilterDate': nextInternalAirFilterDate.toString(),
+        'nextInternalAirFilterKm': nextInternalAirFilterKm,
+        'nextOilDate': nextOilDate.toString(),
+        'nextOilFilterDate': nextOilFilterDate.toString(),
+        'nextOilFilterKm': nextOilFilterKm,
+        'nextOilKm': nextOilKm,
+        'nextRevisionDate': nextRevisionDate.toString(),
+        'nextRevisionKm': nextRevisionKm,
+        'nextTireCalibrationDate': nextTireCalibrationDate.toString(),
+        'nextTireDate': nextTireDate.toString(),
+        'nextTireKm': nextTireKm,
+      };
+}
+
+enum VehicleDataType{
+  calibration,
+  revision,
+  cooling,
+  internalAirFilter,
+  engineAirFilter,
+  tire,
+  oilFilter,
+  oil
 }

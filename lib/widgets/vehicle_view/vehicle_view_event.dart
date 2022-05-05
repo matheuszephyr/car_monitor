@@ -5,3 +5,4 @@ abstract class VehicleViewEvent {}
 class VehicleViewLoadEvent extends VehicleViewEvent{
   
 }
+

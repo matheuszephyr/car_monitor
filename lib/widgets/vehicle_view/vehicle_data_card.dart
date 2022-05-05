@@ -1,6 +1,8 @@
 import 'dart:developer';
 
+import 'package:carmonitor/models/vehicle-data.dart';
 import 'package:carmonitor/util/validation.dart';
+import 'package:carmonitor/widgets/vehicle_edit/vehicle_data/vehicle_data_edit.dart';
 import 'package:flutter/material.dart';
 
 /*
@@ -13,6 +15,8 @@ class VehicleDataCard extends StatefulWidget {
 
 // ignore: must_be_immutable
 class VehicleDataCard extends StatelessWidget {
+  int idVehicle;
+  VehicleDataType type;
   IconData icon;
   String label;
   DateTime? lastDate;
@@ -20,17 +24,22 @@ class VehicleDataCard extends StatelessWidget {
   int? lastKm;
   int? nextKm;
   EStatusAlert alert = EStatusAlert.undefined;
-  Color alertColor = Colors.greenAccent;
+  Color alertColor = Colors.green;
+  double progressValue = 0;
 
   VehicleDataCard(
       {Key? key,
+      required this.idVehicle,
+      required this.type,
       required this.icon,
       required this.label,
       this.lastDate,
       this.nextDate,
       this.lastKm,
       this.nextKm})
-      : super(key: key);
+      : super(key: key) {
+    this.progressValue = _getProgressValue(lastDate, nextDate, lastKm, nextKm);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +65,9 @@ class VehicleDataCard extends StatelessWidget {
                   ),
                 ),
                 IconButton(
-                  onPressed: () => {},
+                  onPressed: () async => {
+                    await VehicleDataEditModal().displayVehicleDataEditDialog(context, idVehicle, type, label)
+                  },
                   icon: const Icon(Icons.edit),
                   splashColor: Colors.deepPurple,
                   focusColor: Colors.deepPurple,
@@ -100,10 +111,10 @@ class VehicleDataCard extends StatelessWidget {
                           ),
                           Text(
                             "${nextDate?.day}/${nextDate?.month.toString()}/${nextDate?.year.toString()}",
-                            style: const TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w500,
-                            ),
+                            style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: alertColor),
                           ),
                         ],
                       ),
@@ -145,9 +156,10 @@ class VehicleDataCard extends StatelessWidget {
                           ),
                           Text(
                             "${nextKm?.toString()}",
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 15,
-                              fontWeight: FontWeight.w500,
+                              fontWeight: FontWeight.bold,
+                              color: alertColor,
                             ),
                           ),
                         ],
@@ -157,7 +169,7 @@ class VehicleDataCard extends StatelessWidget {
                 : const SizedBox(height: 2.0),
             const SizedBox(height: 5.0),
             LinearProgressIndicator(
-              value: getPercentValue(lastDate, nextDate, lastKm, nextKm),
+              value: progressValue,
               semanticsLabel: 'Progresso restante',
               valueColor: AlwaysStoppedAnimation<Color>(alertColor),
               backgroundColor: Colors.grey,
@@ -170,7 +182,7 @@ class VehicleDataCard extends StatelessWidget {
     );
   }
 
-  double getPercentValue(
+  double _getProgressValue(
       DateTime? lastDate, DateTime? nextDate, int? lastKm, int? nextKm) {
     double percentDate = 0;
     double percentKm = 0;
@@ -198,7 +210,7 @@ class VehicleDataCard extends StatelessWidget {
 
   void _setStatusAlert(EStatusAlert status) {
     if (status == EStatusAlert.ok) {
-      alertColor = Colors.greenAccent;
+      alertColor = Colors.green;
     }
     if (status == EStatusAlert.warning) {
       alertColor = Colors.orangeAccent;

@@ -89,10 +89,11 @@ class VehicleService {
         if (result.isNotEmpty) {
           return result.first;
         } else {
-          return null;
+          return VehicleData();
         }
       } else {
-        throw Exception('Failed to load VehicleData with code => ' + response.statusCode.toString());
+        throw Exception('Failed to load VehicleData with code => ' +
+            response.statusCode.toString());
       }
     } catch (ex) {
       throw Exception(ex);
@@ -124,8 +125,8 @@ class VehicleService {
     try {
       final headers = {'Content-Type': 'application/json'};
       String jsonBody = jsonEncode(vehicleData);
-      final encoding = Encoding.getByName('utf-8');
-      final uri = Uri.http(baseUri, '/vehicle/${vehicleData.id}');
+      final encoding = Encoding.getByName('utf-8');      
+      final uri = Uri.http(baseUri, '/status/${vehicleData.id}');
 
       Response response = await put(
         uri,

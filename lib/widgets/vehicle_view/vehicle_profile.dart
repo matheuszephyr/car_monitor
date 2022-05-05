@@ -102,6 +102,8 @@ class VehicleProfile extends StatelessWidget {
                       itemBuilder: (context, index) {
                         final card = state.vehicleDataCards[index];
                         return VehicleDataCard(
+                          type: card.type,
+                          idVehicle: state.vehicle.id,
                           icon: card.icon,
                           label: card.label,
                           lastDate: card.lastDate,
@@ -119,7 +121,7 @@ class VehicleProfile extends StatelessWidget {
               return const Center(
                 child: CircularProgressIndicator(
                   color: Colors.indigo,
-                  strokeWidth: 3,
+                  strokeWidth: 5,
                 ),
               );
             } 

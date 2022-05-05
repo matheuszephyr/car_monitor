@@ -19,64 +19,84 @@ class VehicleViewBloc extends Bloc<VehicleViewEvent, VehicleViewState> {
     on<VehicleViewLoadEvent>(_loadVehicleViewData);
   }
 
-  Future<void> _loadVehicleViewData(VehicleViewLoadEvent event, Emitter<VehicleViewState> emitter) async{
-    log("state.idvehicle =>> "+state.idVehicle.toString());
+  Future<void> _loadVehicleViewData(
+      VehicleViewLoadEvent event, Emitter<VehicleViewState> emitter) async {
+    log("state.idvehicle =>> " + state.idVehicle.toString());
 
-    if (state != VehicleViewLoadingState){
-
+    if (state != VehicleViewLoadingState) {
       int idVehicle = state.idVehicle;
 
       emit(VehicleViewLoadingState());
 
       Vehicle vehicleResponse = await VehicleService.getVehicle(idVehicle);
 
-      if (vehicleResponse.id > 0){
-        VehicleData? vehicleDataResponse = await VehicleService.getVehicleData(idVehicle);
-        log("dataResp => " + jsonEncode(vehicleDataResponse));
+      if (vehicleResponse.id > 0) {
+        VehicleData? vehicleDataResponse =
+            await VehicleService.getVehicleData(idVehicle);
+        //log("dataResp => " + jsonEncode(vehicleDataResponse));
 
-        vehicleDataResponse = validateData(vehicleResponse, vehicleDataResponse);
-        List<VehicleDataCardModel> vehicleCards = validateDataCards(vehicleDataResponse);
+        vehicleDataResponse =
+            validateData(vehicleResponse, vehicleDataResponse);
+        List<VehicleDataCardModel> vehicleCards =
+            validateDataCards(vehicleDataResponse);
 
-        emit(VehicleViewPopulateState(vehicleResponse, vehicleDataResponse, vehicleCards));
-      }
-      else{
+        if (vehicleDataResponse.id > 0) {
+          var resultUpd = VehicleService.putVehicleData(vehicleDataResponse);
+        } else {
+          var resultIns = VehicleService.postVehicleData(vehicleDataResponse);
+        }
+
+        emit(VehicleViewPopulateState(
+            vehicleResponse, vehicleDataResponse, vehicleCards));
+      } else {
         emit(VehicleViewErrorState("Veículo não encontrado !"));
       }
-      
     }
-
   }
-
 
   VehicleData validateData(Vehicle vehicle, VehicleData? vehicleData) {
     var result = vehicleData ?? VehicleData(idVehicle: 0);
     result.idVehicle = vehicle.id;
 
-    var validateRevisionDate = Validation.validateNextDate(vehicle.year, 182, result.lastRevisionDate);
-    var validateRevisionKm = Validation.validateNextKm(vehicle.odometer, 10000, result.lastRevisionKm);    
-    var validateOilDate = Validation.validateNextDate(vehicle.year, 365, result.lastOilDate);
-    var validateOilKm = Validation.validateNextKm(vehicle.odometer, 10000, result.lastOilKm);
-    var validateOilFilterDate = Validation.validateNextDate(vehicle.year, 730, result.lastOilFilterDate);
-    var validateOilFilterKm = Validation.validateNextKm(vehicle.odometer, 15000, result.lastOilFilterKm);
-    var validateEngineAirFilterDate = Validation.validateNextDate(vehicle.year, 365, result.lastEngineAirFilterDate);
-    var validateEngineAirFilterKm = Validation.validateNextKm(vehicle.odometer, 10000, result.lastEngineAirFilterKm);
-    var validateInternalAirFilterDate = Validation.validateNextDate(vehicle.year, 365, result.lastInternalAirFilterDate);
-    var validateInternalAirFilterKm = Validation.validateNextKm(vehicle.odometer, 15000, result.lastInternalAirFilterKm);
-    var validateTireDate = Validation.validateNextDate(vehicle.year, 1825, result.lastTireDate);
-    var validateTireKm = Validation.validateNextKm(vehicle.odometer, 45000, result.lastTireKm);
-    var validateTireCalibrationDate = Validation.validateNextDate(vehicle.year, 15, result.lastTireCalibrationDate);
-    var validateCoolingDate = Validation.validateNextDate(vehicle.year, 730, result.lastCoolingDate);
+    var validateRevisionDate =
+        Validation.validateNextDate(vehicle.year, 182, result.lastRevisionDate);
+    var validateRevisionKm = Validation.validateNextKm(
+        vehicle.odometer, 10000, result.lastRevisionKm);
+    var validateOilDate =
+        Validation.validateNextDate(vehicle.year, 365, result.lastOilDate);
+    var validateOilKm =
+        Validation.validateNextKm(vehicle.odometer, 10000, result.lastOilKm);
+    var validateOilFilterDate = Validation.validateNextDate(
+        vehicle.year, 730, result.lastOilFilterDate);
+    var validateOilFilterKm = Validation.validateNextKm(
+        vehicle.odometer, 15000, result.lastOilFilterKm);
+    var validateEngineAirFilterDate = Validation.validateNextDate(
+        vehicle.year, 365, result.lastEngineAirFilterDate);
+    var validateEngineAirFilterKm = Validation.validateNextKm(
+        vehicle.odometer, 10000, result.lastEngineAirFilterKm);
+    var validateInternalAirFilterDate = Validation.validateNextDate(
+        vehicle.year, 365, result.lastInternalAirFilterDate);
+    var validateInternalAirFilterKm = Validation.validateNextKm(
+        vehicle.odometer, 15000, result.lastInternalAirFilterKm);
+    var validateTireDate =
+        Validation.validateNextDate(vehicle.year, 1825, result.lastTireDate);
+    var validateTireKm =
+        Validation.validateNextKm(vehicle.odometer, 45000, result.lastTireKm);
+    var validateTireCalibrationDate = Validation.validateNextDate(
+        vehicle.year, 15, result.lastTireCalibrationDate);
+    var validateCoolingDate =
+        Validation.validateNextDate(vehicle.year, 730, result.lastCoolingDate);
 
     result.lastRevisionDate = validateRevisionDate[0];
     result.nextRevisionDate = validateRevisionDate[1];
     result.lastRevisionKm = validateRevisionKm[0];
     result.nextRevisionKm = validateRevisionKm[1];
-    
+
     result.lastOilDate = validateOilDate[0];
     result.nextOilDate = validateOilDate[1];
     result.lastOilKm = validateOilKm[0];
     result.nextOilKm = validateOilKm[1];
-    
+
     result.lastOilFilterDate = validateOilFilterDate[0];
     result.nextOilFilterDate = validateOilFilterDate[1];
     result.lastOilFilterKm = validateOilFilterKm[0];
@@ -103,21 +123,20 @@ class VehicleViewBloc extends Bloc<VehicleViewEvent, VehicleViewState> {
     result.lastCoolingDate = validateCoolingDate[0];
     result.nextCoolingDate = validateCoolingDate[1];
 
-    
-
     return result;
   }
 
-  List<VehicleDataCardModel> validateDataCards(VehicleData vehicleData){
-
+  List<VehicleDataCardModel> validateDataCards(VehicleData vehicleData) {
     List<VehicleDataCardModel> vehicleCards = List.empty(growable: true);
 
     vehicleCards.add(VehicleDataCardModel(
+      type: VehicleDataType.calibration,
         icon: Icons.tire_repair,
         label: "Calibragem",
         lastDate: vehicleData.lastTireCalibrationDate,
         nextDate: vehicleData.nextTireCalibrationDate));
     vehicleCards.add(VehicleDataCardModel(
+      type: VehicleDataType.revision,
         icon: Icons.remove_red_eye,
         label: "Revisão",
         lastDate: vehicleData.lastRevisionDate,
@@ -125,12 +144,14 @@ class VehicleViewBloc extends Bloc<VehicleViewEvent, VehicleViewState> {
         lastKm: vehicleData.lastRevisionKm,
         nextKm: vehicleData.nextRevisionKm));
     vehicleCards.add(VehicleDataCardModel(
+      type: VehicleDataType.cooling,
       icon: Icons.water,
       label: "Arrefecimento ",
       lastDate: vehicleData.lastCoolingDate,
       nextDate: vehicleData.nextCoolingDate,
     ));
     vehicleCards.add(VehicleDataCardModel(
+      type: VehicleDataType.internalAirFilter,
         icon: Icons.ac_unit,
         label: "Filtro de Ar Interno",
         lastDate: vehicleData.lastInternalAirFilterDate,
@@ -138,6 +159,7 @@ class VehicleViewBloc extends Bloc<VehicleViewEvent, VehicleViewState> {
         lastKm: vehicleData.lastInternalAirFilterKm,
         nextKm: vehicleData.nextInternalAirFilterKm));
     vehicleCards.add(VehicleDataCardModel(
+      type: VehicleDataType.engineAirFilter,
         icon: Icons.air,
         label: "Filtro de Ar Motor",
         lastDate: vehicleData.lastEngineAirFilterDate,
@@ -145,6 +167,7 @@ class VehicleViewBloc extends Bloc<VehicleViewEvent, VehicleViewState> {
         lastKm: vehicleData.lastEngineAirFilterKm,
         nextKm: vehicleData.nextEngineAirFilterKm));
     vehicleCards.add(VehicleDataCardModel(
+      type: VehicleDataType.tire,
         icon: Icons.add_road_rounded,
         label: "Pneu",
         lastDate: vehicleData.lastTireDate,
@@ -152,8 +175,17 @@ class VehicleViewBloc extends Bloc<VehicleViewEvent, VehicleViewState> {
         lastKm: vehicleData.lastTireKm,
         nextKm: vehicleData.nextTireKm));
     vehicleCards.add(VehicleDataCardModel(
+      type: VehicleDataType.oilFilter,
         icon: Icons.wash,
         label: "Filtro de Óleo",
+        lastDate: vehicleData.lastOilFilterDate,
+        nextDate: vehicleData.nextOilFilterDate,
+        lastKm: vehicleData.lastOilFilterKm,
+        nextKm: vehicleData.nextOilFilterKm));
+    vehicleCards.add(VehicleDataCardModel(
+      type: VehicleDataType.oil,
+        icon: Icons.water_drop_sharp,
+        label: "Óleo do Motor",
         lastDate: vehicleData.lastOilFilterDate,
         nextDate: vehicleData.nextOilFilterDate,
         lastKm: vehicleData.lastOilFilterKm,

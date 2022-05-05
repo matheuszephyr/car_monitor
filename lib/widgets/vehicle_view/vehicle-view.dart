@@ -38,7 +38,7 @@ class _VehicleViewState extends State<VehicleView> {
         body: VehicleProfile(),
         floatingActionButton: FloatingActionButton(
           onPressed: () async => {
-            VehicleOdometerEditModal().displayTextInputDialog(context, widget.vehicle.id)
+            await VehicleOdometerEditModal().displayTextInputDialog(context, widget.vehicle.id)
           } ,
           child: const Icon(Icons.speed_sharp),
         ),
