@@ -1,3 +1,4 @@
+import 'package:carmonitor/util/alerts.dart';
 import 'package:carmonitor/widgets/vehicle_view/vehicle_data_card.dart';
 import 'package:carmonitor/widgets/vehicle_view/vehicle_view_bloc.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +11,7 @@ class VehicleProfile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    context.read<VehicleViewBloc>().add(VehicleViewLoadEvent());
+    context.read<VehicleViewBloc>().add(VehicleViewLoadEvent());    
 
     return Container(
       decoration: const BoxDecoration(color: Colors.black),
@@ -20,6 +21,7 @@ class VehicleProfile extends StatelessWidget {
           builder: (context, state) {
             if (state is VehicleViewPopulateState) {
               return Column(
+                mainAxisSize: MainAxisSize.max,
                 children: [
                   Container(
                     decoration: const BoxDecoration(
@@ -108,6 +110,7 @@ class VehicleProfile extends StatelessWidget {
                           label: card.label,
                           lastDate: card.lastDate,
                           nextDate: card.nextDate,
+                          odometer: state.vehicle.odometer,
                           nextKm: card.nextKm,
                           lastKm: card.lastKm,
                         );

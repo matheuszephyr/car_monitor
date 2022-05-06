@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:carmonitor/models/vehicle-data.dart';
+import 'package:carmonitor/util/alerts.dart';
 import 'package:carmonitor/util/validation.dart';
 import 'package:carmonitor/widgets/vehicle_edit/vehicle_data/vehicle_data_edit.dart';
 import 'package:flutter/material.dart';
@@ -21,8 +22,9 @@ class VehicleDataCard extends StatelessWidget {
   String label;
   DateTime? lastDate;
   DateTime? nextDate;
+  int odometer;
   int? lastKm;
-  int? nextKm;
+  int? nextKm;  
   EStatusAlert alert = EStatusAlert.undefined;
   Color alertColor = Colors.green;
   double progressValue = 0;
@@ -33,12 +35,13 @@ class VehicleDataCard extends StatelessWidget {
       required this.type,
       required this.icon,
       required this.label,
+      required this.odometer,
       this.lastDate,
       this.nextDate,
       this.lastKm,
       this.nextKm})
       : super(key: key) {
-    this.progressValue = _getProgressValue(lastDate, nextDate, lastKm, nextKm);
+    progressValue = _setProgressValue();
   }
 
   @override
@@ -182,30 +185,37 @@ class VehicleDataCard extends StatelessWidget {
     );
   }
 
-  double _getProgressValue(
-      DateTime? lastDate, DateTime? nextDate, int? lastKm, int? nextKm) {
+  double _setProgressValue() {
     double percentDate = 0;
     double percentKm = 0;
 
     if (lastDate != null && nextDate != null) {
       percentDate = Validation.getPercentValueDate(lastDate, nextDate);
     }
-    if (lastKm != null && nextKm! > 0) {
-      percentKm = Validation.getPercentValueInt(nextKm, lastKm);
+    if ((nextKm ?? 0) > 0) {
+      double lastPercentKm = 0;
+      double actualPercentKm = 0;
+
+      actualPercentKm = Validation.getPercentValueInt(nextKm!, odometer);
+      if(lastKm != null){
+        lastPercentKm = Validation.getPercentValueInt(nextKm!, lastKm!);
+      }
+      
+      percentKm = actualPercentKm > lastPercentKm ? actualPercentKm : lastPercentKm;
     }
 
-    double retorno = percentKm > percentDate ? percentKm : percentDate;
-    retorno = double.parse((retorno).toStringAsFixed(2));
+    double result = percentKm > percentDate ? percentKm : percentDate;
+    result = double.parse((result).toStringAsFixed(2));
 
-    if (retorno > 1.0) {
+    if (result > 1.0) {
       _setStatusAlert(EStatusAlert.critical);
-    } else if (retorno > 0.7) {
+    } else if (result > 0.7) {
       _setStatusAlert(EStatusAlert.warning);
-    } else if (retorno >= 0) {
+    } else if (result >= 0) {
       _setStatusAlert(EStatusAlert.ok);
     }
 
-    return retorno;
+    return result;
   }
 
   void _setStatusAlert(EStatusAlert status) {

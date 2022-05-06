@@ -19,7 +19,7 @@ class _VehicleItemState extends State<VehicleItem> {
       child: Card(
         child: Container(
           decoration: const BoxDecoration(
-            gradient: LinearGradient(colors: [Colors.white10, Colors.white]),
+            gradient: LinearGradient(colors: [Colors.white, Colors.white]),
           ),
           child: Padding(
             padding: const EdgeInsets.all(5.0),
